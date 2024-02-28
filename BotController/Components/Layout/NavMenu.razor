@@ -1,0 +1,38 @@
+﻿@inject NavigationManager NavManager;
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">Bot Controller</a>
+    </div>
+</div>
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="class">
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Class
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="moveBot">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Move Bot
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" @onclick="logout">
+                 <a>
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Log Out
+                </a>
+            </NavLink>
+        </div>
+    </nav>
+</div>
+
+@{
+    async void logout()
+    {
+        NavManager.NavigateTo("/");
+    }
+}

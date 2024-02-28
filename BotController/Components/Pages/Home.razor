@@ -1,0 +1,88 @@
+﻿@layout BotController.Components.Layout.LoginLayout
+@page "/"
+@using Plugin.Fingerprint
+@using Plugin.Fingerprint.Abstractions
+@inject NavigationManager NavManager;
+
+@* <div class="col-12 row">
+    <a @onclick="BioMetric"> <img width="80px" src="img/bio.png" /></a>
+</div> *@
+<div class="text-center">
+    <label style="font-weight: bold;">Bot Controller</label>
+    <img src="./img/botcon.png" class="img-thumbnail" />
+    <br /><br />
+    <div class="form-group">
+        @* <label for="user-name">User name</label> *@
+        <input class="form-control" id="UserName" placeholder="UserName" @bind="@UserName" />
+    </div>
+    <br />
+    <div class="form-group">
+       @*  <label for="password">Password</label> *@
+        <input type="password" class="form-control" id="Password" placeholder="Password" @bind="@Password" />
+    </div>
+    <br />
+    <div class="form-group">
+        <button type="submit" id="login" class="btn btn-primary" @onclick="LoginUser">Login</button>
+    </div>
+    <hr>
+    <div class="form-group">
+        <a @onclick="BioMetric"> <img width="80px" src="img/bio.png" /></a>
+    </div>
+</div>
+
+
+@code {
+
+    private string UserName { get; set; }
+    private string Password { get; set; }
+
+    private async Task LoginUser()
+    {
+        if (!string.IsNullOrEmpty(UserName) || !string.IsNullOrEmpty(Password))
+        {
+            if (UserName.ToLower() == "admin" && Password.ToLower() == "admin")
+            {
+                NavManager.NavigateTo("/class");
+            }
+            else
+            {
+                await Application.Current.MainPage.DisplayAlert("Authentication", "Wrong Details", "OK");
+            }
+        }
+        else
+        {
+            await Application.Current.MainPage.DisplayAlert("Authentication", "Please enter details", "OK");
+        }
+
+    }
+
+    async Task BioMetric()
+    {
+        try
+        {
+            var request = new AuthenticationRequestConfiguration("Finger's Validation", "Prove it!! prove you have finger!");
+            request.AllowAlternativeAuthentication = true;
+            var result = await CrossFingerprint.Current.AuthenticateAsync(request);
+
+            if (result.Authenticated)
+            {
+                //await LoanOffersCalculatorMAUI.App.RealmApp.LogInAsync(Credentials.Anonymous());
+                NavManager.NavigateTo("/class");
+                Thread.Sleep(1000);
+                this.StateHasChanged();
+            }
+            else
+            {
+                await Application.Current.MainPage.DisplayAlert("Authenticate!", "Access Denied", "OK");
+                //NavManager.NavigateTo("/class");
+            }
+        }
+        catch (Exception ex)
+        {
+            
+            throw;
+        }
+       
+    }
+
+}

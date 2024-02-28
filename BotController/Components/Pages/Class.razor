@@ -1,0 +1,67 @@
+﻿@page "/class"
+
+<h1>Classes</h1>
+
+<div class="form-group">
+    @* <label for="user-name">User name</label> *@
+    <input class="form-control" id="UserName" placeholder="Class Id" @bind="@ClassId" />
+</div>
+<br />
+<div class="form-group">
+    @*  <label for="password">Password</label> *@
+    <input class="form-control" id="Password" placeholder="Class Name" @bind="@ClassName" />
+</div>
+<br />
+<div class="form-group">
+    <button type="submit" class="btn btn-primary" @onclick="AddClass">Add Class</button>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Class Id</th>
+            <th>Class Name</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var c in classDetails)
+        {
+            <tr>
+                <td>@c.Key</td>
+                <td>@c.Value</td>
+                <td> <button type="submit" class="btn btn-primary" @onclick="@(() => Delete(@c.Key))">Delete</button></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+
+    private int ClassId { get; set; }
+    private string ClassName { get; set; }
+
+    public static Dictionary<int, string> classDetails;
+
+    static Class()
+    {
+        classDetails = new Dictionary<int, string>();
+        classDetails.Add(1, "Class A");
+        classDetails.Add(2, "Class A");
+        classDetails.Add(3, "Class A");
+    }
+
+    private async void AddClass()
+    {
+        string value = "";
+        if (classDetails.TryGetValue(ClassId, out value))
+            await Application.Current.MainPage.DisplayAlert("Something went wrong", $"Class Id is already exists with class name - {value}", "OK");
+        else
+            classDetails.Add(ClassId, ClassName);
+    }
+
+    private void Delete(int key)
+    {
+        classDetails.Remove(key);
+    }
+}

@@ -1,0 +1,35 @@
+﻿@page "/moveBot"
+
+<h1>Move Bot</h1>
+
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Class Id</th>
+                <th>Class Name</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var c in classDetails)
+            {
+                <tr>
+                    <td>@c.Key</td>
+                    <td>@c.Value</td>
+                <td> <button type="submit" class="btn btn-primary">Move</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+@code {
+    private Dictionary<int, string> classDetails;
+
+    public MoveBot()
+    {
+        classDetails = Class.classDetails;
+    }
+    
+}
