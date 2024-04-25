@@ -1,8 +1,17 @@
 ﻿@page "/moveBot"
+@using Renci.SshNet
 
-<h1>Move Bot</h1>
 
+@if (SSHConnect.sshClient == null)
+{
+    <h1>Move Bot <span style="color: red;font-weight:bolder;">●</span></h1>
+}
+else
+{
+    <h1>Move Bot <span style="color: green;font-weight:bolder;">●</span></h1>
+}
 
+@*
     <table class="table">
         <thead>
             <tr>
@@ -21,15 +30,310 @@
                 </tr>
             }
         </tbody>
-    </table>
+    </table> *@
+
+
+
+<div class="card col">
+    <div class="card-body">
+        <div>
+            <div>
+                <input type="text" @bind="@cmdtext" />
+            </div>
+            <div>
+                <a class="btn btn-primary" disabled=@IsTaskRunning @onclick="ExecuteCmd">Execute</a>
+            </div>
+        </div>
+        <h5 class="card-title text-center">Class A</h5>
+        <p class="card-text"></p>
+        <div class="text-center">
+            <a class="btn btn-primary" @onclick="Move">Start Moving</a>
+        </div>
+        <p class="card-text text-center"></p>
+        <div class="text-center">
+            <div class="text-center">
+                <a class="btn btn-primary" @onclick="Sweeping">
+                    Sweeping
+                </a>
+            </div>
+            <p class="card-text text-center"></p>
+            <div class="text-center">
+                <a class="btn btn-primary" @onclick="Mopping">
+                    Mopping
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 
 @code {
     private Dictionary<int, string> classDetails;
+    public string cmdtext { get; set; }
+    bool IsTaskRunning = false;
 
     public MoveBot()
     {
         classDetails = Class.classDetails;
     }
-    
+
+    private async Task Move()
+    {
+        try
+        {
+            SSHConnect.sshClient.RunCommand($@"
+                                            motor1_in1_pin = 17
+                                            motor1_in2_pin = 22
+                                            motor2_in1_pin = 17
+                                            motor2_in2_pin = 22
+                                            motor3_in1_pin = 23
+                                            motor3_in2_pin = 24
+                                            motor4_in1_pin = 23
+                                            motor4_in2_pin = 24
+
+                                            GPIO.setmode(GPIO.BCM)
+                                            GPIO.setup([motor1_in1_pin, motor1_in2_pin,
+                                            motor2_in1_pin, motor2_in2_pin,
+                                            motor3_in1_pin, motor3_in2_pin,
+                                            motor4_in1_pin, motor4_in2_pin], GPIO.OUT)
+
+                                            def motor1(direction):
+                                            GPIO.output(motor1_in1_pin, direction)
+                                            GPIO.output(motor1_in2_pin, not direction)
+
+                                            def motor2(direction):
+                                            GPIO.output(motor2_in1_pin, direction)
+                                            GPIO.output(motor2_in2_pin, not direction)
+
+                                            def motor3(direction):
+                                            GPIO.output(motor3_in1_pin, direction)
+                                            GPIO.output(motor3_in2_pin, not direction)
+
+                                            def motor4(direction):
+                                            GPIO.output(motor4_in1_pin, direction)
+                                            GPIO.output(motor4_in2_pin, not direction)
+
+                                            def run_motor1():
+                                            while True:
+                                            motor1(1)
+
+                                            def run_motor2():
+                                            while True:
+                                            motor2(1)
+
+                                            def run_motor3():
+                                            while True:
+                                            motor3(0)
+
+                                            def run_motor4():
+                                            while True:
+                                            motor4(0)
+
+                                            motor1_thread = threading.Thread(target=run_motor1)
+                                            motor2_thread = threading.Thread(target=run_motor2)
+                                            motor3_thread = threading.Thread(target=run_motor3)
+                                            motor4_thread = threading.Thread(target=run_motor4)
+
+                                            motor1_thread.start()
+                                            motor2_thread.start()
+                                            motor3_thread.start()
+                                            motor4_thread.start()
+
+                                            try:
+                                            while True:
+                                            time.sleep(5)
+                                            except KeyboardInterrupt:
+                                            GPIO.cleanup()
+                                            ");
+        }
+        catch (Exception ex)
+        {
+            await Application.Current.MainPage.DisplayAlert("Something went wrong", $"{ex.Message}", "OK");
+        }
+    }
+
+    private async Task Sweeping()
+    {
+        try
+        {
+            SSHConnect.sshClient.RunCommand($@"
+                                            motor1_in1_pin = 17
+                                            motor1_in2_pin = 22
+                                            motor2_in1_pin = 17
+                                            motor2_in2_pin = 22
+                                            motor3_in1_pin = 23
+                                            motor3_in2_pin = 24
+                                            motor4_in1_pin = 23
+                                            motor4_in2_pin = 24
+
+                                            GPIO.setmode(GPIO.BCM)
+                                            GPIO.setup([motor1_in1_pin, motor1_in2_pin,
+                                            motor2_in1_pin, motor2_in2_pin,
+                                            motor3_in1_pin, motor3_in2_pin,
+                                            motor4_in1_pin, motor4_in2_pin], GPIO.OUT)
+
+                                            def motor1(direction):
+                                            GPIO.output(motor1_in1_pin, direction)
+                                            GPIO.output(motor1_in2_pin, not direction)
+
+                                            def motor2(direction):
+                                            GPIO.output(motor2_in1_pin, direction)
+                                            GPIO.output(motor2_in2_pin, not direction)
+
+                                            def motor3(direction):
+                                            GPIO.output(motor3_in1_pin, direction)
+                                            GPIO.output(motor3_in2_pin, not direction)
+
+                                            def motor4(direction):
+                                            GPIO.output(motor4_in1_pin, direction)
+                                            GPIO.output(motor4_in2_pin, not direction)
+
+                                            def run_motor1():
+                                            while True:
+                                            motor1(1)
+
+                                            def run_motor2():
+                                            while True:
+                                            motor2(1)
+
+                                            def run_motor3():
+                                            while True:
+                                            motor3(0)
+
+                                            def run_motor4():
+                                            while True:
+                                            motor4(0)
+
+                                            motor1_thread = threading.Thread(target=run_motor1)
+                                            motor2_thread = threading.Thread(target=run_motor2)
+                                            motor3_thread = threading.Thread(target=run_motor3)
+                                            motor4_thread = threading.Thread(target=run_motor4)
+
+                                            motor1_thread.start()
+                                            motor2_thread.start()
+                                            motor3_thread.start()
+                                            motor4_thread.start()
+
+                                            try:
+                                            while True:
+                                            time.sleep(5)
+                                            except KeyboardInterrupt:
+                                            GPIO.cleanup()
+                                            ");
+        }
+        catch (Exception ex)
+        {
+            await Application.Current.MainPage.DisplayAlert("Something went wrong", $"{ex.Message}", "OK");
+        }
+    }
+
+    private async Task Mopping()
+    {
+        try
+        {
+            SSHConnect.sshClient.RunCommand($@"
+                                        import RPi.GPIO as GPIO
+                                        import time
+
+
+                                        GPIO.setmode(GPIO.BCM)
+
+
+                                        GPIO.setup(2, GPIO.OUT)
+
+                                        try:
+                                            while True:
+                                                GPIO.output(2, GPIO.HIGH)
+                                                time.sleep(3)  
+
+                                                GPIO.output(2, GPIO.LOW) 
+                                                time.sleep(5) 
+
+                                        finally:
+                                            GPIO.cleanup()
+
+                                            motor1_in1_pin = 17
+                                            motor1_in2_pin = 22
+                                            motor2_in1_pin = 17
+                                            motor2_in2_pin = 22
+                                            motor3_in1_pin = 23
+                                            motor3_in2_pin = 24
+                                            motor4_in1_pin = 23
+                                            motor4_in2_pin = 24
+
+                                            GPIO.setmode(GPIO.BCM)
+                                            GPIO.setup([motor1_in1_pin, motor1_in2_pin,
+                                            motor2_in1_pin, motor2_in2_pin,
+                                            motor3_in1_pin, motor3_in2_pin,
+                                            motor4_in1_pin, motor4_in2_pin], GPIO.OUT)
+
+                                            def motor1(direction):
+                                            GPIO.output(motor1_in1_pin, direction)
+                                            GPIO.output(motor1_in2_pin, not direction)
+
+                                            def motor2(direction):
+                                            GPIO.output(motor2_in1_pin, direction)
+                                            GPIO.output(motor2_in2_pin, not direction)
+
+                                            def motor3(direction):
+                                            GPIO.output(motor3_in1_pin, direction)
+                                            GPIO.output(motor3_in2_pin, not direction)
+
+                                            def motor4(direction):
+                                            GPIO.output(motor4_in1_pin, direction)
+                                            GPIO.output(motor4_in2_pin, not direction)
+
+                                            def run_motor1():
+                                            while True:
+                                            motor1(1)
+
+                                            def run_motor2():
+                                            while True:
+                                            motor2(1)
+
+                                            def run_motor3():
+                                            while True:
+                                            motor3(0)
+
+                                            def run_motor4():
+                                            while True:
+                                            motor4(0)
+
+                                            motor1_thread = threading.Thread(target=run_motor1)
+                                            motor2_thread = threading.Thread(target=run_motor2)
+                                            motor3_thread = threading.Thread(target=run_motor3)
+                                            motor4_thread = threading.Thread(target=run_motor4)
+
+                                            motor1_thread.start()
+                                            motor2_thread.start()
+                                            motor3_thread.start()
+                                            motor4_thread.start()
+
+                                            try:
+                                            while True:
+                                            time.sleep(5)
+                                            except KeyboardInterrupt:
+                                            GPIO.cleanup()
+                                            ");
+        }
+        catch (Exception ex)
+        {
+            await Application.Current.MainPage.DisplayAlert("Something went wrong", $"{ex.Message}", "OK");
+        }
+    }
+
+    private async Task ExecuteCmd()
+    {
+        IsTaskRunning = true;
+        try
+        {
+            SSHConnect.sshClient.RunCommand(this.cmdtext);
+        }
+        catch (Exception ex)
+        {
+            await Application.Current.MainPage.DisplayAlert("Something went wrong", $"{ex.Message}", "OK");
+        }
+        IsTaskRunning = false;
+    }
 }

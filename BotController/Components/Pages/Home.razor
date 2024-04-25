@@ -42,7 +42,7 @@
         {
             if (UserName.ToLower() == "admin" && Password.ToLower() == "admin")
             {
-                NavManager.NavigateTo("/class");
+                NavManager.NavigateTo("/sshConnect");
             }
             else
             {
@@ -58,6 +58,7 @@
 
     async Task BioMetric()
     {
+        //NavManager.NavigateTo("/moveBot");
         try
         {
             var request = new AuthenticationRequestConfiguration("Finger's Validation", "Prove it!! prove you have finger!");
@@ -67,7 +68,7 @@
             if (result.Authenticated)
             {
                 //await LoanOffersCalculatorMAUI.App.RealmApp.LogInAsync(Credentials.Anonymous());
-                NavManager.NavigateTo("/class");
+                NavManager.NavigateTo("/sshConnect");
                 Thread.Sleep(1000);
                 this.StateHasChanged();
             }

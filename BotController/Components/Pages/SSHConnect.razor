@@ -1,0 +1,51 @@
+﻿@using Renci.SshNet
+@page "/sshConnect"
+@inject NavigationManager NavManager;
+
+<h3>Connect a bot</h3>
+<br />
+<div class="form-group">
+    @* <label for="user-name">User name</label> *@
+    <input class="form-control" id="HostName" placeholder="Host Name" @bind="@HostName" />
+</div>
+<br />
+<div class="form-group">
+    @* <label for="user-name">User name</label> *@
+    <input class="form-control" id="UserName" placeholder="User Name" @bind="@UserName" />
+</div>
+<br />
+<div class="form-group">
+    @*  <label for="password">Password</label> *@
+    <input class="form-control" id="Password" placeholder="Password" @bind="@Password" />
+</div>
+<br />
+<div class="form-group">
+    <button type="submit" class="btn btn-primary" @onclick="Connect">Connect</button>
+</div>
+
+
+@code {
+    private string HostName { get; set; }
+    private string UserName { get; set; }
+    private string Password { get; set; }
+    public static SshClient sshClient;
+    private async Task Connect(MouseEventArgs e)
+    {
+        try
+        {
+            var connectionInfo = new ConnectionInfo(HostName, UserName,
+                                        new PasswordAuthenticationMethod(UserName, Password));
+            sshClient = new SshClient(connectionInfo);
+
+            sshClient.Connect();
+            await Application.Current.MainPage.DisplayAlert("Connection Successfull", $"You have successfully connected to device", "OK");
+            NavManager.NavigateTo("/moveBot");
+        }
+        catch (Exception ex)
+        {
+            await Application.Current.MainPage.DisplayAlert("Something went wrong", $"{ex.Message}", "OK");
+        }
+        
+
+    }
+}
